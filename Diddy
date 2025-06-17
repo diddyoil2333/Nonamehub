@@ -1,0 +1,50 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local backpack = player.Backpack
+local seedID
+
+local function setPackChar()
+    for _, item in ipairs(backpack:GetChildren()) do
+        if item:GetAttribute("n") == "Flower Seed Pack" then
+            print("Flower in Hand")
+            seedID = item:GetAttribute("c")
+            print(seedID)
+            return seedID
+        end
+    end
+end
+
+local function infPackLogic()
+
+    local seedID = setPackChar()
+    local args = {
+            "SetRecipe",
+            workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("NewCrafting"):WaitForChild("SeedEventCraftingWorkBench"),
+            "SeedEventWorkbench",
+            "Crafters Seed Pack"
+        }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+
+    local args = {
+            "InputItem",
+            workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("NewCrafting"):WaitForChild("SeedEventCraftingWorkBench"),
+            "SeedEventWorkbench",
+            1,
+            {
+                ItemType = "Seed Pack",
+                ItemData = {
+                    UUID = seedID
+                }
+            }
+        }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+end
+
+local function AutoSeedLoop()
+    while true do
+        infPackLogic()
+       -- it will auto submit and cancel
+    end
+end
+
+AutoSeedLoop()
